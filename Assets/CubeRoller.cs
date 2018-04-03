@@ -107,9 +107,12 @@ public class CubeRoller : MonoBehaviour
 				{
 					if (!RaycastUp(traceEnd))
 					{
-						if (!RaycastFlatReverse(transform.position))
+						if (!RaycastFlat(transform.position, true))
 						{
-							RollClimb();
+							if (!RaycastUp(traceEnd))
+							{
+								RollClimb();
+							}
 						}
 					}
 				}
@@ -147,41 +150,48 @@ public class CubeRoller : MonoBehaviour
 		StartCoroutine("RollCube");
 	}
 
-	bool RaycastFlat(Vector3 startPos)
+	bool RaycastFlat(Vector3 startPos, bool reverse = false)
 	{
-		if (debug)
+		float direction = 1;
+
+		if (reverse)
 		{
-			Debug.DrawLine(startPos, startPos + inputCopy * cubeExtent * 2, Color.red, 2f);
+			direction = -1f;
 		}
 
-		if (Physics.Raycast(startPos, inputCopy, out rayHit, cubeExtent * 2))
+		if (debug)
+		{
+			Debug.DrawLine(startPos, startPos + direction * (inputCopy * cubeExtent * 2), Color.red, 2f);
+		}
+
+		if (Physics.Raycast(startPos, direction * inputCopy, out rayHit, cubeExtent * 2))
 		{
 			return true;
 		}
 		else
 		{
-			traceEnd = startPos + (cubeExtent * 2 * inputCopy);
+			traceEnd = startPos + direction * (cubeExtent * 2 * inputCopy);
 			return false;
 		}
 	}
 
-	bool RaycastFlatReverse(Vector3 startPos)
-	{
-		if (debug)
-		{
-			Debug.DrawLine(startPos, startPos - inputCopy * cubeExtent * 2, Color.red, 2f);
-		}
+	//bool RaycastFlatReverse(Vector3 startPos)
+	//{
+	//	if (debug)
+	//	{
+	//		Debug.DrawLine(startPos, startPos - inputCopy * cubeExtent * 2, Color.red, 2f);
+	//	}
 
-		if (Physics.Raycast(startPos, -inputCopy, out rayHit, cubeExtent * 2))
-		{
-			return true;
-		}
-		else
-		{
-			traceEnd = startPos - (cubeExtent * 2 * inputCopy);
-			return false;
-		}
-	}
+	//	if (Physics.Raycast(startPos, -inputCopy, out rayHit, cubeExtent * 2))
+	//	{
+	//		return true;
+	//	}
+	//	else
+	//	{
+	//		traceEnd = startPos - (cubeExtent * 2 * inputCopy);
+	//		return false;
+	//	}
+	//}
 
 	bool RaycastDown(Vector3 startPos)
 	{
